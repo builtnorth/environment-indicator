@@ -1,0 +1,220 @@
+<?php
+
+namespace Navas\EnvironmentIndicator;
+
+/**
+ * Indicator: single entry point for the package.
+ *
+ * Named for what it is rather than for its role. `App` is the name every
+ * consuming plugin and theme uses for its own root class, so importing this
+ * package's entry point forced an alias at the call site — Polaris core's
+ * `Dependencies` carried `use Navas\EnvironmentIndicator\App as
+ * EnvironmentIndicator;` — aliasing it alongside two other packages' `App`
+ * classes, all three in the same file.
+ *
+ * Call `Indicator::instance()->boot()` once. `boot()` detects the
+ * environment and, when it recognises one, registers the admin-bar node and
+ * its styles.
+ */
+class Indicator
+{
+	/**
+	 * Holds the single instance of this class.
+	 *
+	 * @var Indicator|null
+	 */
+	protected static $instance = null;
+
+	/**
+	 * @var string The current environment
+	 */
+	private string $environment = '';
+
+	/**
+	 * @var array Environment configurations
+	 */
+	private array $config = [
+		'local' => [
+			'color' => '#7c3aed',
+			'text' => 'Local'
+		],
+		'development' => [
+			'color' => '#3858e9',
+			'text' => 'Development'
+		],
+		'staging' => [
+			'color' => '#db7800',
+			'text' => 'Staging'
+		],
+		'production' => [
+			'color' => '#0cb034',
+			'text' => 'Production'
+		]
+	];
+
+	/**
+	 * Get the single instance of this class.
+	 *
+	 * @return Indicator
+	 */
+	public static function instance()
+	{
+		if (is_null(self::$instance)) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Private constructor to prevent direct instantiation.
+	 */
+	private function __construct()
+	{
+		// Constructor does nothing - initialization happens in boot()
+	}
+
+
+	/**
+	 * Boot the environment indicator.
+	 * This method should be called after getting the instance.
+	 */
+	public function boot(): void
+	{
+		$this->environment = $this->detect_environment();
+
+		if ($this->environment !== '') {
+			add_action('admin_bar_menu', [$this, 'add_environment_menu'], 100);
+			add_action('admin_head', [$this, 'add_styles']);
+			add_action('wp_head', [$this, 'add_styles']);
+		}
+	}
+
+	/**
+	 * Detect the current environment.
+	 *
+	 * Prefers WordPress core's `wp_get_environment_type()` (constant, getenv, then
+	 * default). Falls back to the `WP_ENVIRONMENT_TYPE` constant when the function
+	 * is unavailable (e.g. very early bootstrap in tests).
+	 */
+	private function detect_environment(): string
+	{
+		if (\function_exists('wp_get_environment_type')) {
+			$env = \wp_get_environment_type();
+			return isset($this->config[$env]) ? $env : '';
+		}
+
+		if (\defined('WP_ENVIRONMENT_TYPE')) {
+			$env = \WP_ENVIRONMENT_TYPE;
+			return isset($this->config[$env]) ? $env : '';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Whether the environment indicator should be shown to the current user.
+	 */
+	private function should_show_indicator(): bool
+	{
+		if (!is_admin_bar_showing()) {
+			return false;
+		}
+
+		/**
+		 * Filters whether the environment indicator is visible to the current user.
+		 *
+		 * @param bool   $show        Whether to show the indicator. Default checks `manage_options`.
+		 * @param string $environment Current environment slug.
+		 */
+		return (bool) apply_filters(
+			'environment_indicator_show',
+			current_user_can('manage_options'),
+			$this->environment
+		);
+	}
+
+	/**
+	 * Add the environment indicator to the admin bar
+	 */
+	public function add_environment_menu($admin_bar): void
+	{
+		if (!$this->should_show_indicator()) {
+			return;
+		}
+
+		$config = $this->config[$this->environment] ?? $this->config['development'];
+
+		$admin_bar->add_node([
+			'id'    => 'environment-indicator',
+			'title' => sprintf('<span class="env-dot"></span> %s', esc_html($config['text'])),
+			'parent' => 'top-secondary',
+			'meta'  => [
+				'class' => 'environment-indicator'
+			]
+		]);
+	}
+
+	/**
+	 * Add required CSS styles
+	 */
+	public function add_styles(): void
+	{
+		if (!$this->should_show_indicator()) {
+			return;
+		}
+
+		$config = $this->config[$this->environment] ?? $this->config['development'];
+
+?>
+		<style>
+			#wpadminbar #wp-admin-bar-environment-indicator {
+				pointer-events: none;
+				cursor: default;
+			}
+
+			#wpadminbar #wp-admin-bar-environment-indicator .ab-item {
+				padding: 0 15px;
+			}
+
+			#wpadminbar #wp-admin-bar-environment-indicator .env-dot {
+				display: inline-block;
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				border: 1px solid #ffffff;
+				background: <?php echo esc_attr($config['color']); ?>;
+				margin-right: 2px;
+				margin-top: -2px;
+				vertical-align: middle;
+			}
+		</style>
+<?php
+	}
+
+	/**
+	 * Get the current environment
+	 */
+	public function get_environment(): string
+	{
+		return $this->environment;
+	}
+
+	/**
+	 * Set custom environment configuration.
+	 *
+	 * Per-environment arrays are merged recursively so a partial override
+	 * (e.g. only `color`) keeps existing `text` / defaults.
+	 */
+	public function set_config(array $config): void
+	{
+		foreach ($config as $env => $settings) {
+			if (!\is_array($settings)) {
+				continue;
+			}
+			$this->config[$env] = \array_merge(
+				$this->config[$env] ?? [],
+				$settings
+			);
+		}
+	}
+}

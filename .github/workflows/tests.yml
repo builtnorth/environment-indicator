@@ -1,0 +1,13 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    uses: builtnorth/.github/.github/workflows/composer-package-ci.yml@main
+    secrets: inherit
+    with:
+      composer-repository-profile: coding-standards-only
