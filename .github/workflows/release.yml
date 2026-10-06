@@ -21,7 +21,7 @@ jobs:
     uses: builtnorth/.github/.github/workflows/composer-package-release.yml@main
     with:
       package-name: 'environment-indicator'
-      package-display-name: 'WP Environment Indicator'
+      package-display-name: 'Environment Indicator'
       composer-namespace: 'navas/environment-indicator'
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
