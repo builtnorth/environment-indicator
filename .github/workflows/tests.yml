@@ -10,4 +10,4 @@ jobs:
     uses: builtnorth/.github/.github/workflows/composer-package-ci.yml@main
     secrets: inherit
     with:
-      composer-repository-profile: coding-standards-only
+      composer-repository-profile: from-composer
