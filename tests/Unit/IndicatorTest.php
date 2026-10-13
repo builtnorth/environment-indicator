@@ -104,19 +104,103 @@ class IndicatorTest extends TestCase {
 	}
 
 	/**
-	 * Test boot with unknown environment does not register hooks
+	 * A name outside WordPress's four types is shown as a custom environment.
 	 */
-	public function test_boot_with_unknown_environment() {
+	public function test_boot_with_unknown_environment_shows_it_as_custom() {
 		$this->mock_environment_type( 'qa' );
 
+		WP_Mock::expectActionAdded( 'admin_bar_menu', [ Indicator::instance(), 'add_environment_menu' ], 100 );
+		WP_Mock::expectActionAdded( 'admin_head', [ Indicator::instance(), 'add_styles' ] );
+		WP_Mock::expectActionAdded( 'wp_head', [ Indicator::instance(), 'add_styles' ] );
+
+		$app = Indicator::instance();
+		$app->boot();
+
+		$this->assertSame( 'qa', $app->get_environment() );
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * The environment filter replaces core's type with any name.
+	 */
+	public function test_environment_filter_replaces_the_core_type() {
+		$this->mock_environment_type( 'production' );
+		WP_Mock::onFilter( 'siratik_environment_indicator_environment' )
+			->with( 'production' )
+			->reply( 'Client-Review' );
+
+		$app = Indicator::instance();
+		$app->boot();
+
+		$this->assertSame( 'client-review', $app->get_environment() );
+	}
+
+	/**
+	 * Returning an empty name from the filter hides the indicator.
+	 */
+	public function test_environment_filter_can_hide_the_indicator() {
+		$this->mock_environment_type( 'staging' );
+		WP_Mock::onFilter( 'siratik_environment_indicator_environment' )
+			->with( 'staging' )
+			->reply( '' );
+
 		WP_Mock::expectActionNotAdded( 'admin_bar_menu', [ Indicator::instance(), 'add_environment_menu' ] );
-		WP_Mock::expectActionNotAdded( 'admin_head', [ Indicator::instance(), 'add_styles' ] );
-		WP_Mock::expectActionNotAdded( 'wp_head', [ Indicator::instance(), 'add_styles' ] );
 
 		$app = Indicator::instance();
 		$app->boot();
 
 		$this->assertSame( '', $app->get_environment() );
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * A custom environment is labelled with its name by default.
+	 */
+	public function test_custom_environment_is_labelled_with_its_name() {
+		$this->mock_environment_type( 'client_review' );
+		$this->mock_show_allowed( 'client_review' );
+
+		WP_Mock::userFunction( 'esc_html' )
+			->with( 'Client Review' )
+			->andReturn( 'Client Review' );
+
+		$admin_bar = Mockery::mock( 'WP_Admin_Bar' );
+		$admin_bar->shouldReceive( 'add_node' )
+			->once()
+			->with( Mockery::on( static function ( $args ) {
+				return strpos( $args['title'], 'Client Review' ) !== false;
+			} ) );
+
+		$app = Indicator::instance();
+		$app->boot();
+		$app->add_environment_menu( $admin_bar );
+
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * A configured custom label replaces the name.
+	 */
+	public function test_custom_label_from_config_replaces_the_name() {
+		$this->mock_environment_type( 'qa' );
+		$this->mock_show_allowed( 'qa' );
+
+		WP_Mock::userFunction( 'esc_html' )
+			->with( 'Quality Assurance' )
+			->andReturn( 'Quality Assurance' );
+
+		$admin_bar = Mockery::mock( 'WP_Admin_Bar' );
+		$admin_bar->shouldReceive( 'add_node' )
+			->once()
+			->with( Mockery::on( static function ( $args ) {
+				return strpos( $args['title'], 'Quality Assurance' ) !== false;
+			} ) );
+
+		$app = Indicator::instance();
+		$app->set_config( [ 'custom' => [ 'text' => 'Quality Assurance' ] ] );
+		$app->boot();
+		$app->add_environment_menu( $admin_bar );
+
 		$this->assertConditionsMet();
 	}
 

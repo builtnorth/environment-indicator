@@ -61,10 +61,32 @@ add_filter( 'siratik_environment_indicator_show', function ( $show, $environment
 }, 10, 2 );
 ```
 
+### Custom environments
+
+WordPress only knows `local`, `development`, `staging` and `production`. Use the `siratik_environment_indicator_environment` filter to show any other name; it receives core's environment type:
+
+```php
+// Show "QA" on this server.
+add_filter( 'siratik_environment_indicator_environment', function ( $environment ) {
+	return 'qa';
+} );
+```
+
+Names outside the four types use the `custom` entry: a slate dot, labelled with the name itself ("client-review" shows as "Client Review"). Give them a fixed label or colour with `set_config()`:
+
+```php
+Indicator::instance()->set_config( [
+	'custom' => [ 'text' => 'Quality Assurance', 'color' => '#0891b2' ],
+] );
+```
+
+Return an empty string from the filter to hide the indicator.
+
 ## Features
 
 - Detects environment via `wp_get_environment_type()` (falls back to the `WP_ENVIRONMENT_TYPE` constant)
 - Built-in labels for `local`, `development`, `staging`, and `production`
+- Any other environment name through the `siratik_environment_indicator_environment` filter
 - Shows environment indicator in admin bar
 - Customizable colors and labels
 - Only visible to users with `manage_options` capability by default (customizable via filter)
@@ -76,8 +98,9 @@ add_filter( 'siratik_environment_indicator_show', function ( $show, $environment
 Indicator::instance()->get_environment();
 ```
 
-Returns `local`, `development`, `staging`, `production`, or an empty string when
-the environment is unrecognised.
+Returns `local`, `development`, `staging`, `production`, the name returned by the
+`siratik_environment_indicator_environment` filter, or an empty string when the
+indicator is hidden.
 
 ## Development
 
