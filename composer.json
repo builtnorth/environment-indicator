@@ -46,7 +46,8 @@
 		"lint": "phpcs",
 		"lint:fix": "phpcbf",
 		"phpcs": "phpcs",
-		"phpcbf": "phpcbf"
+		"phpcbf": "phpcbf",
+		"phpcompat": "phpcs -p inc --standard=PHPCompatibility --runtime-set testVersion 8.1-"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
