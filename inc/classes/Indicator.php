@@ -7,7 +7,7 @@ namespace Siratik\EnvironmentIndicator;
  *
  * Named for what it is rather than for its role. `App` is the name every
  * consuming plugin and theme uses for its own root class, so importing this
- * package's entry point forced an alias at the call site — Polaris core's
+ * package's entry point forced an alias at the call site — Kitaris core's
  * `Dependencies` carried `use Siratik\EnvironmentIndicator\App as
  * EnvironmentIndicator;` — aliasing it alongside two other packages' `App`
  * classes, all three in the same file.
