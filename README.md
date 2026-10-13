@@ -10,7 +10,7 @@ changes land without deprecation cycles until 1.0.
 ## Installation
 
 ```bash
-composer require navas/environment-indicator
+composer require siratik/environment-indicator
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ composer require navas/environment-indicator
 Initialize the package in your theme or plugin:
 
 ```php
-use Navas\EnvironmentIndicator\Indicator;
+use Siratik\EnvironmentIndicator\Indicator;
 
 Indicator::instance()->boot();
 ```
@@ -30,7 +30,7 @@ Indicator::instance()->boot();
 Customize the environment colors and labels. Partial overrides keep other keys:
 
 ```php
-use Navas\EnvironmentIndicator\Indicator;
+use Siratik\EnvironmentIndicator\Indicator;
 
 $indicator = Indicator::instance();
 
@@ -52,11 +52,11 @@ Call `set_config()` before `boot()` if you add a custom environment slug that mu
 
 ### Visibility
 
-By default, the indicator is only shown to users with the `manage_options` capability. Use the `environment_indicator_show` filter to change who can see it:
+By default, the indicator is only shown to users with the `manage_options` capability. Use the `siratik_environment_indicator_show` filter to change who can see it:
 
 ```php
 // Show to editors and above.
-add_filter( 'environment_indicator_show', function ( $show, $environment ) {
+add_filter( 'siratik_environment_indicator_show', function ( $show, $environment ) {
 	return current_user_can( 'edit_posts' );
 }, 10, 2 );
 ```

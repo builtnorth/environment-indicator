@@ -11,12 +11,12 @@
  * registration file reachable through its own package's namespace prefix
  * would make the coordinator resolve a class name back onto this file.
  *
- * @package Navas\EnvironmentIndicator
+ * @package Siratik\EnvironmentIndicator
  */
 
 declare(strict_types=1);
 
-use Navas\PackageLoader\Registry;
+use Siratik\PackageLoader\Registry;
 
 // A consumer could vendor this package without the coordinator (a stale
 // composer.lock, a hand-assembled vendor tree). Falling back to plain Composer
@@ -25,9 +25,9 @@ use Navas\PackageLoader\Registry;
 // files entry, so if it is not already declared no autoloader can produce it.
 if (class_exists(Registry::class, false)) {
 	Registry::instance()->register([
-		'package' => 'navas/environment-indicator',
+		'package' => 'siratik/environment-indicator',
 		'version' => (string) require __DIR__ . '/version.php',
 		'root'    => __DIR__,
-		'psr4'    => ['Navas\\EnvironmentIndicator\\' => 'inc/classes/'],
+		'psr4'    => ['Siratik\\EnvironmentIndicator\\' => 'inc/classes/'],
 	]);
 }

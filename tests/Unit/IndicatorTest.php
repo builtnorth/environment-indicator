@@ -2,13 +2,13 @@
 /**
  * Tests for the Indicator class
  *
- * @package Navas\EnvironmentIndicator\Tests\Unit
+ * @package Siratik\EnvironmentIndicator\Tests\Unit
  */
 
-namespace Navas\EnvironmentIndicator\Tests\Unit;
+namespace Siratik\EnvironmentIndicator\Tests\Unit;
 
-use Navas\EnvironmentIndicator\Indicator;
-use Navas\EnvironmentIndicator\Tests\TestCase;
+use Siratik\EnvironmentIndicator\Indicator;
+use Siratik\EnvironmentIndicator\Tests\TestCase;
 use WP_Mock;
 use Mockery;
 
@@ -50,7 +50,7 @@ class IndicatorTest extends TestCase {
 			->with( 'manage_options' )
 			->andReturn( true );
 		WP_Mock::userFunction( 'apply_filters' )
-			->with( 'environment_indicator_show', true, $environment )
+			->with( 'siratik_environment_indicator_show', true, $environment )
 			->andReturnUsing(
 				static function ( $tag, $value ) {
 					return $value;
@@ -261,7 +261,7 @@ class IndicatorTest extends TestCase {
 		WP_Mock::userFunction( 'current_user_can' )
 			->with( 'manage_options' )
 			->andReturn( true );
-		WP_Mock::onFilter( 'environment_indicator_show' )
+		WP_Mock::onFilter( 'siratik_environment_indicator_show' )
 			->with( true, 'development' )
 			->reply( false );
 

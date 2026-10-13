@@ -2,10 +2,10 @@
 /**
  * Base test case for WP Environment Indicator
  *
- * @package Navas\EnvironmentIndicator\Tests
+ * @package Siratik\EnvironmentIndicator\Tests
  */
 
-namespace Navas\EnvironmentIndicator\Tests;
+namespace Siratik\EnvironmentIndicator\Tests;
 
 use WP_Mock;
 use WP_Mock\Tools\TestCase as BaseTestCase;

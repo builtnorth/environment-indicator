@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file for WP Environment Indicator
  *
- * @package Navas\EnvironmentIndicator
+ * @package Siratik\EnvironmentIndicator
  */
 
 // Suppress PHP 8.4 deprecation warnings from WP_Mock
@@ -24,7 +24,7 @@ require_once $autoloader;
 if ( $using_root_autoloader ) {
 	spl_autoload_register(
 		static function ( string $class ): void {
-			$prefix = 'Navas\\EnvironmentIndicator\\Tests\\';
+			$prefix = 'Siratik\\EnvironmentIndicator\\Tests\\';
 			if ( ! str_starts_with( $class, $prefix ) ) {
 				return;
 			}

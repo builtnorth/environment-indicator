@@ -22,7 +22,7 @@ jobs:
     with:
       package-name: 'environment-indicator'
       package-display-name: 'Environment Indicator'
-      composer-namespace: 'navas/environment-indicator'
+      composer-namespace: 'siratik/environment-indicator'
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
     permissions:

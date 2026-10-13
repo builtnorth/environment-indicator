@@ -1,6 +1,6 @@
 <?php
 
-namespace Navas\EnvironmentIndicator;
+namespace Siratik\EnvironmentIndicator;
 
 /**
  * Indicator: single entry point for the package.
@@ -8,7 +8,7 @@ namespace Navas\EnvironmentIndicator;
  * Named for what it is rather than for its role. `App` is the name every
  * consuming plugin and theme uses for its own root class, so importing this
  * package's entry point forced an alias at the call site — Polaris core's
- * `Dependencies` carried `use Navas\EnvironmentIndicator\App as
+ * `Dependencies` carried `use Siratik\EnvironmentIndicator\App as
  * EnvironmentIndicator;` — aliasing it alongside two other packages' `App`
  * classes, all three in the same file.
  *
@@ -127,7 +127,7 @@ class Indicator
 		 * @param string $environment Current environment slug.
 		 */
 		return (bool) apply_filters(
-			'environment_indicator_show',
+			'siratik_environment_indicator_show',
 			current_user_can('manage_options'),
 			$this->environment
 		);
