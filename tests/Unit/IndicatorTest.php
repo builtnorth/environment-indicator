@@ -204,7 +204,7 @@ class IndicatorTest extends TestCase {
 
 		$admin_bar = Mockery::mock( 'WP_Admin_Bar' );
 		$admin_bar->shouldReceive( 'add_node' )
-			->once()
+			->twice() // the badge, and its mobile dropdown label
 			->with( Mockery::on( static function ( $args ) {
 				return strpos( $args['title'], 'Client Review' ) !== false;
 			} ) );
@@ -229,7 +229,7 @@ class IndicatorTest extends TestCase {
 
 		$admin_bar = Mockery::mock( 'WP_Admin_Bar' );
 		$admin_bar->shouldReceive( 'add_node' )
-			->once()
+			->twice() // the badge, and its mobile dropdown label
 			->with( Mockery::on( static function ( $args ) {
 				return strpos( $args['title'], 'Quality Assurance' ) !== false;
 			} ) );
@@ -258,8 +258,16 @@ class IndicatorTest extends TestCase {
 			->once()
 			->with( Mockery::on( function( $args ) {
 				return $args['id'] === 'environment-indicator' &&
-					   strpos( $args['title'], 'Development' ) !== false &&
+					   strpos( $args['title'], '<span class="ab-label">Development</span>' ) !== false &&
 					   $args['parent'] === 'top-secondary';
+			} ) );
+		// The label again, as a child: core's dropdown shows it on phones.
+		$admin_bar->shouldReceive( 'add_node' )
+			->once()
+			->with( Mockery::on( static function ( $args ) {
+				return $args['id'] === 'environment-indicator-label'
+					&& $args['title'] === 'Development'
+					&& $args['parent'] === 'environment-indicator';
 			} ) );
 
 		$app = Indicator::instance();
@@ -294,7 +302,7 @@ class IndicatorTest extends TestCase {
 
 		$admin_bar = Mockery::mock( 'WP_Admin_Bar' );
 		$admin_bar->shouldReceive( 'add_node' )
-			->once()
+			->twice() // the badge, and its mobile dropdown label
 			->with( Mockery::on( static function ( $args ) {
 				return strpos( $args['title'], 'Development' ) !== false
 					&& strpos( $args['title'], 'Custom' ) === false;
@@ -327,7 +335,7 @@ class IndicatorTest extends TestCase {
 
 		$admin_bar = Mockery::mock( 'WP_Admin_Bar' );
 		$admin_bar->shouldReceive( 'add_node' )
-			->once()
+			->twice() // the badge, and its mobile dropdown label
 			->with( Mockery::on( static function ( $args ) {
 				return strpos( $args['title'], 'Custom Dev' ) !== false;
 			} ) );
@@ -461,6 +469,9 @@ class IndicatorTest extends TestCase {
 
 		$this->assertStringContainsString( '#4ab866', $output );
 		$this->assertStringContainsString( '#wp-admin-bar-environment-indicator', $output );
+		// Desktop hides the dropdown; phones bring back the item core would hide.
+		$this->assertMatchesRegularExpression( '/min-width: 783px\)\s*\{[^@]*\.ab-sub-wrapper\s*\{\s*display: none;/s', $output );
+		$this->assertMatchesRegularExpression( '/max-width: 782px\)\s*\{\s*#wpadminbar li#wp-admin-bar-environment-indicator\s*\{\s*display: block;/s', $output );
 		$this->assertConditionsMet();
 	}
 }

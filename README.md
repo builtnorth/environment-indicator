@@ -106,7 +106,7 @@ four types. WordPress then assumes `production`, so the indicator shows "Product
 - Detects environment via `wp_get_environment_type()` (falls back to the `WP_ENVIRONMENT_TYPE` constant)
 - Built-in labels for `local`, `development`, `staging`, and `production`
 - Any other environment name through the `SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM` constant or the `siratik_environment_indicator_custom` filter
-- Shows environment indicator in admin bar
+- Shows environment indicator in admin bar; on phones (782px and narrower) it shows as a dot, and tapping it shows the label
 - Customizable colors and labels
 - Visible to users who can edit posts by default (customizable via filter)
 - Lightweight and efficient

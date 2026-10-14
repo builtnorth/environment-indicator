@@ -213,14 +213,25 @@ class Indicator
 		}
 
 		$config = $this->display();
+		$text   = esc_html($config['text']);
 
+		// The label sits in .ab-label: on phones core's admin-bar CSS hides it
+		// visually (screen readers still read it) and only the dot shows.
 		$admin_bar->add_node([
 			'id'    => 'environment-indicator',
-			'title' => sprintf('<span class="env-dot"></span> %s', esc_html($config['text'])),
+			'title' => sprintf('<span class="env-dot" aria-hidden="true"></span> <span class="ab-label">%s</span>', $text),
 			'parent' => 'top-secondary',
 			'meta'  => [
 				'class' => 'environment-indicator'
 			]
+		]);
+
+		// Phones only (hidden on desktop by add_styles()): tapping the dot opens
+		// core's standard dropdown with the label the bar has no room for.
+		$admin_bar->add_node([
+			'id'     => 'environment-indicator-label',
+			'title'  => $text,
+			'parent' => 'environment-indicator',
 		]);
 	}
 
@@ -237,14 +248,6 @@ class Indicator
 
 ?>
 		<style>
-			#wpadminbar #wp-admin-bar-environment-indicator {
-				pointer-events: none;
-				cursor: default;
-			}
-
-			#wpadminbar #wp-admin-bar-environment-indicator .ab-item {
-				padding: 0 15px;
-			}
 
 			#wpadminbar #wp-admin-bar-environment-indicator .env-dot {
 				display: inline-block;
@@ -256,6 +259,41 @@ class Indicator
 				margin-right: 2px;
 				margin-top: -3px;
 				vertical-align: middle;
+			}
+
+			/* Desktop: the label is in the bar, so the badge is static and has no dropdown. */
+			@media screen and (min-width: 783px) {
+				#wpadminbar #wp-admin-bar-environment-indicator {
+					pointer-events: none;
+					cursor: default;
+				}
+
+				#wpadminbar #wp-admin-bar-environment-indicator .ab-sub-wrapper {
+					display: none;
+				}
+			}
+
+			/* Phones: core hides plugin items below 782px; keep this one as a larger dot. */
+			@media screen and (max-width: 782px) {
+				#wpadminbar li#wp-admin-bar-environment-indicator {
+					display: block;
+				}
+
+				#wpadminbar #wp-admin-bar-environment-indicator > .ab-item {
+					padding: 0 14px;
+				}
+
+				#wpadminbar #wp-admin-bar-environment-indicator .env-dot {
+					width: 12px;
+					height: 12px;
+					margin: 0;
+				}
+
+				/* The badge sits near the right edge; open the dropdown leftward so it stays on screen. */
+				#wpadminbar #wp-admin-bar-environment-indicator .ab-sub-wrapper {
+					right: 0;
+					left: auto;
+				}
 			}
 		</style>
 <?php
