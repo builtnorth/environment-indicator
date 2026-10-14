@@ -50,9 +50,9 @@ class Indicator
 			'color' => '#0cb034',
 			'text' => 'Production'
 		],
-		// Any environment name outside WordPress's four types (see the
-		// siratik_environment_indicator_environment filter). An empty text
-		// shows the environment name itself.
+		// A custom environment name (the SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM
+		// constant or the siratik_environment_indicator_custom filter). An
+		// empty text shows the name itself.
 		'custom' => [
 			'color' => '#64748b',
 			'text' => ''
@@ -102,30 +102,57 @@ class Indicator
 	 * Starts from WordPress core's `wp_get_environment_type()` (constant, getenv,
 	 * then default), falling back to the `WP_ENVIRONMENT_TYPE` constant when the
 	 * function is unavailable (e.g. very early bootstrap in tests). Core only
-	 * knows local, development, staging and production, so the result can be
-	 * replaced with any name through a filter.
+	 * knows local, development, staging and production, so a custom name can be
+	 * shown in its place without changing how WordPress itself behaves.
 	 */
 	private function detect_environment(): string
 	{
-		$env = '';
+		$type = '';
 		if (\function_exists('wp_get_environment_type')) {
-			$env = (string) \wp_get_environment_type();
+			$type = (string) \wp_get_environment_type();
 		} elseif (\defined('WP_ENVIRONMENT_TYPE')) {
-			$env = (string) \WP_ENVIRONMENT_TYPE;
+			$type = (string) \WP_ENVIRONMENT_TYPE;
 		}
 
-		/**
-		 * Filters the environment the indicator shows.
-		 *
-		 * Return any name to show an environment WordPress has no type for
-		 * (e.g. 'qa'); names other than local, development, staging and
-		 * production use the `custom` colour. Return '' to hide the indicator.
-		 *
-		 * @param string $env Environment type from WordPress core.
-		 */
-		$env = apply_filters('siratik_environment_indicator_environment', $env);
+		$custom = \defined('SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM') ? (string) \SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM : '';
 
-		return \is_string($env) ? strtolower((string) preg_replace('/[^A-Za-z0-9_-]/', '', $env)) : '';
+		/**
+		 * Filters the custom environment name the indicator shows.
+		 *
+		 * Return any name (e.g. 'qa') to show it in place of WordPress's type;
+		 * names other than local, development, staging and production use the
+		 * `custom` colour. Return '' to show the type. Defaults to the
+		 * SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM constant. To hide the indicator,
+		 * use the siratik_environment_indicator_show filter.
+		 *
+		 * @param string $custom Custom name, or '' for none.
+		 * @param string $type   Environment type from WordPress core.
+		 */
+		$custom = apply_filters('siratik_environment_indicator_custom', $custom, $type);
+		// Spaces become hyphens, so 'Client Review' is labelled "Client Review".
+		$custom = \is_string($custom)
+			? strtolower((string) preg_replace(['/\s+/', '/[^A-Za-z0-9_-]/'], ['-', ''], trim($custom)))
+			: '';
+
+		return $custom !== '' ? $custom : $type;
+	}
+
+	/**
+	 * Whether WP_ENVIRONMENT_TYPE names one of WordPress's four types.
+	 *
+	 * False when neither the constant nor the environment variable is set, or
+	 * when it holds another value: WordPress then assumes `production`.
+	 */
+	public function is_environment_type_set(): bool
+	{
+		$raw = false;
+		if (\defined('WP_ENVIRONMENT_TYPE') && \WP_ENVIRONMENT_TYPE) {
+			$raw = \WP_ENVIRONMENT_TYPE;
+		} elseif (\function_exists('getenv')) {
+			$raw = getenv('WP_ENVIRONMENT_TYPE');
+		}
+
+		return \in_array($raw, ['local', 'development', 'staging', 'production'], true);
 	}
 
 	/**

@@ -121,12 +121,12 @@ class IndicatorTest extends TestCase {
 	}
 
 	/**
-	 * The environment filter replaces core's type with any name.
+	 * The custom filter replaces core's type with any name.
 	 */
-	public function test_environment_filter_replaces_the_core_type() {
+	public function test_custom_filter_replaces_the_core_type() {
 		$this->mock_environment_type( 'production' );
-		WP_Mock::onFilter( 'siratik_environment_indicator_environment' )
-			->with( 'production' )
+		WP_Mock::onFilter( 'siratik_environment_indicator_custom' )
+			->with( '', 'production' )
 			->reply( 'Client-Review' );
 
 		$app = Indicator::instance();
@@ -136,21 +136,59 @@ class IndicatorTest extends TestCase {
 	}
 
 	/**
-	 * Returning an empty name from the filter hides the indicator.
+	 * An empty custom name shows core's type, and the indicator stays on.
 	 */
-	public function test_environment_filter_can_hide_the_indicator() {
+	public function test_empty_custom_name_shows_the_core_type() {
 		$this->mock_environment_type( 'staging' );
-		WP_Mock::onFilter( 'siratik_environment_indicator_environment' )
-			->with( 'staging' )
+		WP_Mock::onFilter( 'siratik_environment_indicator_custom' )
+			->with( '', 'staging' )
 			->reply( '' );
 
-		WP_Mock::expectActionNotAdded( 'admin_bar_menu', [ Indicator::instance(), 'add_environment_menu' ] );
+		WP_Mock::expectActionAdded( 'admin_bar_menu', [ Indicator::instance(), 'add_environment_menu' ], 100 );
+		WP_Mock::expectActionAdded( 'admin_head', [ Indicator::instance(), 'add_styles' ] );
+		WP_Mock::expectActionAdded( 'wp_head', [ Indicator::instance(), 'add_styles' ] );
 
 		$app = Indicator::instance();
 		$app->boot();
 
-		$this->assertSame( '', $app->get_environment() );
+		$this->assertSame( 'staging', $app->get_environment() );
 		$this->assertConditionsMet();
+	}
+
+	/**
+	 * The constant names the environment when no filter changes it.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_custom_constant_names_the_environment() {
+		define( 'SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM', ' Client Review! ' );
+		$this->mock_environment_type( 'staging' );
+
+		$app = Indicator::instance();
+		$app->boot();
+
+		$this->assertSame( 'client-review', $app->get_environment() );
+	}
+
+	/**
+	 * Only one of the four types counts as set; anything else is core's default.
+	 */
+	public function test_is_environment_type_set_reads_the_environment_variable() {
+		$app = Indicator::instance();
+
+		try {
+			putenv( 'WP_ENVIRONMENT_TYPE' );
+			$this->assertFalse( $app->is_environment_type_set(), 'unset' );
+
+			putenv( 'WP_ENVIRONMENT_TYPE=staging' );
+			$this->assertTrue( $app->is_environment_type_set(), 'staging' );
+
+			putenv( 'WP_ENVIRONMENT_TYPE=qa' );
+			$this->assertFalse( $app->is_environment_type_set(), 'invalid value' );
+		} finally {
+			putenv( 'WP_ENVIRONMENT_TYPE' );
+		}
 	}
 
 	/**
