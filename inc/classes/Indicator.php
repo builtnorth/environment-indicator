@@ -33,9 +33,9 @@ class Indicator
 	/**
 	 * Environment configurations.
 	 *
-	 * Colors come from WordPress's admin palette (the notice colors and the
-	 * Modern scheme accent), graded by how careful to be: green local, blue
-	 * development, amber staging, red production.
+	 * Colors come from WordPress's admin notice palette, graded by how careful
+	 * to be: green for local and development (safe to break), amber staging,
+	 * red production.
 	 *
 	 * @var array
 	 */
@@ -45,7 +45,7 @@ class Indicator
 			'text' => 'Local'
 		],
 		'development' => [
-			'color' => '#3858e9',
+			'color' => '#4ab866',
 			'text' => 'Development'
 		],
 		'staging' => [

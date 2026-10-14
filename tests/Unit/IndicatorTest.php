@@ -437,7 +437,7 @@ class IndicatorTest extends TestCase {
 		$app->add_styles();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'background: #3858e9;', $output );
+		$this->assertStringContainsString( 'background: #4ab866;', $output );
 		$this->assertStringNotContainsString( 'display:none', $output );
 	}
 
@@ -449,8 +449,8 @@ class IndicatorTest extends TestCase {
 		$this->mock_show_allowed( 'development' );
 
 		WP_Mock::userFunction( 'esc_attr' )
-			->with( '#3858e9' )
-			->andReturn( '#3858e9' );
+			->with( '#4ab866' )
+			->andReturn( '#4ab866' );
 
 		$app = Indicator::instance();
 		$app->boot();
@@ -459,7 +459,7 @@ class IndicatorTest extends TestCase {
 		$app->add_styles();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( '#3858e9', $output );
+		$this->assertStringContainsString( '#4ab866', $output );
 		$this->assertStringContainsString( '#wp-admin-bar-environment-indicator', $output );
 		$this->assertConditionsMet();
 	}
