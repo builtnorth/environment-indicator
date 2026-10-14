@@ -416,6 +416,32 @@ class IndicatorTest extends TestCase {
 	}
 
 	/**
+	 * A color that isn't hex never reaches the <style> block.
+	 */
+	public function test_set_config_ignores_colors_that_are_not_hex() {
+		$this->mock_environment_type( 'development' );
+		$this->mock_show_allowed( 'development' );
+
+		WP_Mock::userFunction( 'esc_attr' )->andReturnUsing( static fn ( $v ) => $v );
+
+		$app = Indicator::instance();
+		$app->set_config(
+			[
+				'development' => [ 'color' => 'red;} body{display:none' ],
+				'staging'     => [ 'color' => [ '#fff' ], 'text' => [ 'not a string' ] ],
+			]
+		);
+		$app->boot();
+
+		ob_start();
+		$app->add_styles();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'background: #3858e9;', $output );
+		$this->assertStringNotContainsString( 'display:none', $output );
+	}
+
+	/**
 	 * Test add_styles outputs CSS
 	 */
 	public function test_add_styles() {

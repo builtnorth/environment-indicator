@@ -268,12 +268,22 @@ class Indicator
 	 *
 	 * Per-environment arrays are merged recursively so a partial override
 	 * (e.g. only `color`) keeps existing `text` / defaults.
+	 *
+	 * A color that isn't a hex value (#abc or #aabbcc) is ignored: it is
+	 * printed into a <style> block, where escaping alone can't stop CSS
+	 * injection. A non-string text is ignored too.
 	 */
 	public function set_config(array $config): void
 	{
 		foreach ($config as $env => $settings) {
 			if (!\is_array($settings)) {
 				continue;
+			}
+			if (isset($settings['color']) && !(\is_string($settings['color']) && preg_match('/^#(?:[0-9a-fA-F]{3}){1,2}$/', $settings['color']))) {
+				unset($settings['color']);
+			}
+			if (isset($settings['text']) && !\is_string($settings['text'])) {
+				unset($settings['text']);
 			}
 			$this->config[$env] = \array_merge(
 				$this->config[$env] ?? [],
