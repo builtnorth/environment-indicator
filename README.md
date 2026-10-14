@@ -52,12 +52,12 @@ Call `set_config()` before `boot()` if you add a custom environment slug that mu
 
 ### Visibility
 
-By default, the indicator is only shown to users with the `manage_options` capability. Use the `siratik_environment_indicator_show` filter to change who can see it:
+By default, the indicator is shown to users with the `edit_posts` capability (contributors, authors, editors and administrators): anyone who can change content. Use the `siratik_environment_indicator_show` filter to change who can see it:
 
 ```php
-// Show to editors and above.
+// Administrators only.
 add_filter( 'siratik_environment_indicator_show', function ( $show, $environment ) {
-	return current_user_can( 'edit_posts' );
+	return current_user_can( 'manage_options' );
 }, 10, 2 );
 ```
 
@@ -108,7 +108,7 @@ four types. WordPress then assumes `production`, so the indicator shows "Product
 - Any other environment name through the `SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM` constant or the `siratik_environment_indicator_custom` filter
 - Shows environment indicator in admin bar
 - Customizable colors and labels
-- Only visible to users with `manage_options` capability by default (customizable via filter)
+- Visible to users who can edit posts by default (customizable via filter)
 - Lightweight and efficient
 
 ## Reading the environment

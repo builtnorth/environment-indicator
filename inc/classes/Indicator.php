@@ -187,12 +187,12 @@ class Indicator
 		/**
 		 * Filters whether the environment indicator is visible to the current user.
 		 *
-		 * @param bool   $show        Whether to show the indicator. Default checks `manage_options`.
+		 * @param bool   $show        Whether to show the indicator. Default checks `edit_posts` (contributors and up).
 		 * @param string $environment Current environment slug.
 		 */
 		return (bool) apply_filters(
 			'siratik_environment_indicator_show',
-			current_user_can('manage_options'),
+			current_user_can('edit_posts'),
 			$this->environment
 		);
 	}

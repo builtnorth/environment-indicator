@@ -47,7 +47,7 @@ class IndicatorTest extends TestCase {
 	private function mock_show_allowed( string $environment = 'development' ): void {
 		WP_Mock::userFunction( 'is_admin_bar_showing' )->andReturn( true );
 		WP_Mock::userFunction( 'current_user_can' )
-			->with( 'manage_options' )
+			->with( 'edit_posts' )
 			->andReturn( true );
 		WP_Mock::userFunction( 'apply_filters' )
 			->with( 'siratik_environment_indicator_show', true, $environment )
@@ -354,7 +354,7 @@ class IndicatorTest extends TestCase {
 
 		WP_Mock::userFunction( 'is_admin_bar_showing' )->andReturn( true );
 		WP_Mock::userFunction( 'current_user_can' )
-			->with( 'manage_options' )
+			->with( 'edit_posts' )
 			->andReturn( false );
 		WP_Mock::userFunction( 'apply_filters' )
 			->andReturnUsing(
@@ -381,7 +381,7 @@ class IndicatorTest extends TestCase {
 
 		WP_Mock::userFunction( 'is_admin_bar_showing' )->andReturn( true );
 		WP_Mock::userFunction( 'current_user_can' )
-			->with( 'manage_options' )
+			->with( 'edit_posts' )
 			->andReturn( true );
 		WP_Mock::onFilter( 'siratik_environment_indicator_show' )
 			->with( true, 'development' )
