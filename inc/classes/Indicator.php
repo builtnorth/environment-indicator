@@ -13,7 +13,7 @@ namespace Siratik\EnvironmentIndicator;
  * classes, all three in the same file.
  *
  * Call `Indicator::instance()->boot()` once. `boot()` detects the
- * environment and, when it recognises one, registers the admin-bar node and
+ * environment and, when it recognizes one, registers the admin-bar node and
  * its styles.
  */
 class Indicator
@@ -121,7 +121,7 @@ class Indicator
 		 *
 		 * Return any name (e.g. 'qa') to show it in place of WordPress's type;
 		 * names other than local, development, staging and production use the
-		 * `custom` colour. Return '' to show the type. Defaults to the
+		 * `custom` color. Return '' to show the type. Defaults to the
 		 * SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM constant. To hide the indicator,
 		 * use the siratik_environment_indicator_show filter.
 		 *
@@ -129,7 +129,7 @@ class Indicator
 		 * @param string $type   Environment type from WordPress core.
 		 */
 		$custom = apply_filters('siratik_environment_indicator_custom', $custom, $type);
-		// Spaces become hyphens, so 'Client Review' is labelled "Client Review".
+		// Spaces become hyphens, so 'Client Review' is labeled "Client Review".
 		$custom = \is_string($custom)
 			? strtolower((string) preg_replace(['/\s+/', '/[^A-Za-z0-9_-]/'], ['-', ''], trim($custom)))
 			: '';
@@ -156,8 +156,8 @@ class Indicator
 	}
 
 	/**
-	 * Colour and label for the current environment. Unknown names use the
-	 * `custom` entry, labelled with the name itself unless a label is set.
+	 * Color and label for the current environment. Unknown names use the
+	 * `custom` entry, labeled with the name itself unless a label is set.
 	 *
 	 * @return array{color: string, text: string}
 	 */

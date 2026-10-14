@@ -192,9 +192,9 @@ class IndicatorTest extends TestCase {
 	}
 
 	/**
-	 * A custom environment is labelled with its name by default.
+	 * A custom environment is labeled with its name by default.
 	 */
-	public function test_custom_environment_is_labelled_with_its_name() {
+	public function test_custom_environment_is_labeled_with_its_name() {
 		$this->mock_environment_type( 'client_review' );
 		$this->mock_show_allowed( 'client_review' );
 

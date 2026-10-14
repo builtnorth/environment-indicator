@@ -28,4 +28,4 @@ footer is a major release, and everything else is a patch.
 | `package-display-name` | `Environment Indicator` |
 | `composer-namespace` | `siratik/environment-indicator` |
 
-Secrets are inherited from the organisation.
+Secrets are inherited from the organization.
