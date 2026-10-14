@@ -84,7 +84,7 @@ add_filter( 'siratik_environment_indicator_custom', function ( $custom, $type ) 
 ```
 
 An empty name shows core's type. Names outside the four types use the `custom` entry: a
-slate dot, labeled with the name itself ("client-review" shows as "Client Review"). Give
+gray dot, labeled with the name itself ("client-review" shows as "Client Review"). Give
 them a fixed label or color with `set_config()`:
 
 ```php

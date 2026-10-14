@@ -31,11 +31,17 @@ class Indicator
 	private string $environment = '';
 
 	/**
-	 * @var array Environment configurations
+	 * Environment configurations.
+	 *
+	 * Colors come from WordPress's admin palette (the notice colors and the
+	 * Modern scheme accent), graded by how careful to be: green local, blue
+	 * development, amber staging, red production.
+	 *
+	 * @var array
 	 */
 	private array $config = [
 		'local' => [
-			'color' => '#7c3aed',
+			'color' => '#4ab866',
 			'text' => 'Local'
 		],
 		'development' => [
@@ -43,18 +49,18 @@ class Indicator
 			'text' => 'Development'
 		],
 		'staging' => [
-			'color' => '#db7800',
+			'color' => '#f0b849',
 			'text' => 'Staging'
 		],
 		'production' => [
-			'color' => '#0cb034',
+			'color' => '#cc1818',
 			'text' => 'Production'
 		],
 		// A custom environment name (the SIRATIK_ENVIRONMENT_INDICATOR_CUSTOM
 		// constant or the siratik_environment_indicator_custom filter). An
 		// empty text shows the name itself.
 		'custom' => [
-			'color' => '#64748b',
+			'color' => '#949494',
 			'text' => ''
 		]
 	];
