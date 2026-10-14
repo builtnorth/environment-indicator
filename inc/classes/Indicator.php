@@ -254,7 +254,7 @@ class Indicator
 				border: 1px solid #ffffff;
 				background: <?php echo esc_attr($config['color']); ?>;
 				margin-right: 2px;
-				margin-top: -2px;
+				margin-top: -3px;
 				vertical-align: middle;
 			}
 		</style>
