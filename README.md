@@ -1,4 +1,4 @@
-# Environment Indicator
+# Siratik Environment Indicator
 
 Shows the current WordPress environment (local, development, staging, production) in the admin bar.
 
@@ -134,7 +134,7 @@ composer lint
 
 ## License
 
-GPL-2.0-or-later
+GPL-3.0-or-later — see `LICENSE`.
 
 ## Disclaimer
 
