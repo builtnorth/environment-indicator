@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Siratik\EnvironmentIndicator;
 
+defined('ABSPATH') || exit;
+
 /**
  * Indicator: single entry point for the package.
  *
