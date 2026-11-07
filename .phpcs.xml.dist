@@ -15,5 +15,5 @@
 	<rule ref="BuiltNorth"/>
 
 	<!-- PHP Compatibility -->
-	<config name="testVersion" value="8.2-"/>
+	<config name="testVersion" value="8.1-"/>
 </ruleset>

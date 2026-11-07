@@ -10,7 +10,7 @@
 		}
 	],
 	"require": {
-		"php": ">=8.2",
+		"php": ">=8.1",
 		"siratik/package-loader": "^0.1"
 	},
 	"require-dev": {
@@ -47,7 +47,7 @@
 		"lint:fix": "phpcbf",
 		"phpcs": "phpcs",
 		"phpcbf": "phpcbf",
-		"phpcompat": "phpcs -p inc --standard=PHPCompatibility --runtime-set testVersion 8.2-"
+		"phpcompat": "phpcs -p inc --standard=PHPCompatibility --runtime-set testVersion 8.1-"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
